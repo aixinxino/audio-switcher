@@ -1,0 +1,601 @@
+@import "tailwindcss";
+@import "@heroui/styles";
+
+:root {
+  color-scheme: dark;
+  font-family: "Segoe UI Variable", "Microsoft YaHei UI", "Microsoft YaHei", sans-serif;
+  font-weight: 500;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  margin: 0;
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+body {
+  overflow: hidden;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+kbd {
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 4px;
+  padding: 2px 4px;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 9px;
+}
+
+/* The native Tauri window is resized to this same surface on every motion frame. */
+.island-host {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  background: transparent !important;
+}
+
+.island-host-top {
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.island-host-bottom {
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.island-host-center {
+  align-items: center;
+  justify-content: center;
+}
+
+.island-host-right {
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.island-shell {
+  position: relative;
+  width: 160px;
+  height: 40px;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  border: 0;
+  border-radius: 20px;
+  background: #000;
+  box-shadow: none;
+  transform-origin: top center;
+  will-change: width, height, border-radius;
+  contain: layout paint;
+}
+
+.island-shell-collapsed {
+  border: 0;
+  background: #000;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.island-shell-expanded {
+  box-shadow: none;
+}
+
+.island-content {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+}
+
+.island-content-collapsed {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.capsule-content {
+  grid-template-columns: minmax(0, 1fr) 1px minmax(0, 1fr);
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.capsule-action {
+  justify-self: center;
+  width: 48px;
+  min-width: 48px;
+  height: 40px;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.capsule-action:hover {
+  background: rgba(255, 255, 255, 0.09) !important;
+}
+
+.capsule-action:active {
+  background: rgba(255, 255, 255, 0.15) !important;
+}
+
+.capsule-icon-live {
+  color: #70d69d;
+}
+
+.capsule-icon-muted {
+  color: #ed7180;
+}
+
+.capsule-divider {
+  width: 1px;
+  height: 18px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.island-content-expanded {
+  transform-origin: top center;
+}
+
+.island-panel {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.island-settings-panel {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.inline-settings-header,
+.inline-settings-content,
+.inline-settings-footer {
+  width: 100%;
+}
+
+.inline-settings-title {
+  min-width: 0;
+}
+
+.inline-settings-title-icon,
+.inline-mode-icon {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 9px;
+  color: rgba(255, 255, 255, 0.72);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.inline-settings-title-icon {
+  width: 28px;
+  height: 28px;
+}
+
+.inline-settings-eyebrow {
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+}
+
+.inline-settings-content {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.24) transparent;
+}
+
+.inline-settings-section {
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 10px;
+  background: #101216;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.025);
+}
+
+.inline-settings-section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 9px;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.inline-settings-section-heading strong,
+.inline-settings-section-heading small {
+  display: block;
+}
+
+.inline-settings-section-heading small {
+  margin-top: 3px;
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 9px;
+  font-weight: 500;
+}
+
+.inline-settings-value {
+  color: rgba(255, 255, 255, 0.38);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.inline-mode-button,
+.inline-shortcut-row {
+  width: 100%;
+  min-width: 0;
+  border-color: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.025);
+  color: rgba(255, 255, 255, 0.62);
+  transition: border-color 140ms ease, background-color 140ms ease, color 140ms ease;
+}
+
+.inline-settings-mode-grid {
+  display: grid;
+  width: 100%;
+  min-width: 0;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.inline-mode-button {
+  min-height: 58px;
+}
+
+.inline-mode-button-selected .inline-mode-icon {
+  border-color: rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+}
+
+.inline-mode-button:hover,
+.inline-shortcut-row:hover {
+  border-color: rgba(255, 255, 255, 0.28) !important;
+  background: rgba(255, 255, 255, 0.07) !important;
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.inline-mode-button-selected,
+.inline-shortcut-row-capturing {
+  border-color: rgba(255, 255, 255, 0.72) !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: rgba(255, 255, 255, 0.95);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.inline-shortcut-key {
+  max-width: 112px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  border-color: rgba(255, 255, 255, 0.16);
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.inline-settings-footer {
+  flex: 0 0 auto;
+}
+
+.island-toolbar {
+  flex: 0 0 auto;
+}
+
+.audio-segment-control {
+  height: 34px;
+  border-color: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.audio-segment-button {
+  height: 26px;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.audio-segment-button:hover {
+  background: rgba(255, 255, 255, 0.06) !important;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.audio-segment-active {
+  background: rgba(255, 255, 255, 0.13) !important;
+  color: rgba(255, 255, 255, 0.95) !important;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+}
+
+.audio-toolbar-button,
+.audio-icon-button {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  color: rgba(255, 255, 255, 0.64);
+}
+
+.audio-toolbar-button:hover,
+.audio-icon-button:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.island-panel-body {
+  overflow: hidden;
+}
+
+.audio-volume-row {
+  height: 40px;
+  border-color: rgba(255, 255, 255, 0.1);
+  background: #101216;
+}
+
+.audio-volume-slider {
+  min-width: 0;
+}
+
+.audio-volume-slider [data-slot="track"],
+.audio-volume-track {
+  height: 5px !important;
+  overflow: visible !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: #343942 !important;
+}
+
+.audio-volume-slider [data-slot="fill"],
+.audio-volume-fill {
+  border-radius: 999px !important;
+  background: #f2f4f7 !important;
+}
+
+.audio-volume-slider [data-slot="thumb"],
+.audio-volume-thumb {
+  width: 14px !important;
+  height: 14px !important;
+  border: 2px solid #101216 !important;
+  border-radius: 999px !important;
+  background: #ffffff !important;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.35) !important;
+}
+
+.audio-volume-value {
+  color: rgba(255, 255, 255, 0.82);
+  font-variant-numeric: tabular-nums;
+}
+
+.audio-device-list {
+  scrollbar-gutter: stable;
+}
+
+.audio-device-row {
+  border-color: rgba(255, 255, 255, 0.11);
+  background: rgba(255, 255, 255, 0.025);
+  color: rgba(255, 255, 255, 0.9);
+  transition: border-color 140ms ease, background-color 140ms ease, transform 140ms ease;
+}
+
+.audio-device-row:hover {
+  border-color: rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.075) !important;
+  transform: translateY(-1px);
+}
+
+.audio-device-row-selected {
+  border-color: rgba(242, 246, 250, 0.76) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+}
+
+.device-status-dot {
+  width: 7px;
+  height: 7px;
+  flex: 0 0 auto;
+  border-radius: 999px;
+}
+
+.device-status-dot-active {
+  background: #70d69d;
+  box-shadow: 0 0 8px rgba(112, 214, 157, 0.55);
+}
+
+.device-status-dot-idle {
+  background: rgba(255, 255, 255, 0.24);
+}
+
+.island-footer {
+  flex: 0 0 auto;
+}
+
+/* Settings is a separate frameless window, but shares the same black material. */
+.settings-window-shell {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  min-width: 760px;
+  min-height: 540px;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 26px;
+  background: #08090b;
+  color: rgba(255, 255, 255, 0.9);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 22px 60px rgba(0, 0, 0, 0.55);
+}
+
+.settings-window-bar {
+  display: flex;
+  height: 42px;
+  flex: 0 0 42px;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0 14px 0 20px;
+  color: rgba(255, 255, 255, 0.48);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  -webkit-app-region: drag;
+}
+
+.settings-window-bar b {
+  margin: 0 4px;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.settings-close-button {
+  min-width: 28px;
+  color: rgba(255, 255, 255, 0.65);
+  -webkit-app-region: no-drag;
+}
+
+.settings-close-button:hover {
+  background: rgba(255, 255, 255, 0.09) !important;
+  color: white;
+}
+
+.settings-window-body {
+  display: grid;
+  min-height: 0;
+  flex: 1;
+  grid-template-columns: 226px minmax(0, 1fr);
+}
+
+.settings-sidebar {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  background: #0b0d10;
+  padding: 16px;
+}
+
+.settings-brand-icon {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 11px;
+  color: rgba(255, 255, 255, 0.82);
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.settings-nav-button {
+  height: 42px;
+  border-color: transparent;
+  color: rgba(255, 255, 255, 0.46);
+}
+
+.settings-nav-button:hover {
+  background: rgba(255, 255, 255, 0.06) !important;
+  color: rgba(255, 255, 255, 0.86);
+}
+
+.settings-nav-selected {
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  background: rgba(255, 255, 255, 0.12) !important;
+  color: rgba(255, 255, 255, 0.95) !important;
+  box-shadow: inset 3px 0 0 rgba(255, 255, 255, 0.78);
+}
+
+.settings-sidebar-close {
+  border-color: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.035);
+  color: rgba(255, 255, 255, 0.48);
+}
+
+.settings-sidebar-close:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.settings-content {
+  min-width: 0;
+  overflow-y: auto;
+  padding: 32px 44px;
+}
+
+.settings-eyebrow {
+  color: rgba(255, 255, 255, 0.38);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+}
+
+.settings-card,
+.guide-card {
+  border-color: rgba(255, 255, 255, 0.1);
+  background: #101318;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035), 0 12px 28px rgba(0, 0, 0, 0.18);
+}
+
+.settings-position-button,
+.shortcut-card {
+  border-color: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.02);
+  color: rgba(255, 255, 255, 0.54);
+}
+
+.settings-position-button:hover,
+.shortcut-card:hover {
+  border-color: rgba(255, 255, 255, 0.25) !important;
+  background: rgba(255, 255, 255, 0.07) !important;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.settings-position-selected,
+.shortcut-card-capturing,
+.display-mode-setting-selected {
+  border-color: rgba(255, 255, 255, 0.72) !important;
+  background: rgba(255, 255, 255, 0.11) !important;
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.display-mode-setting-button {
+  border-color: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.02);
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.display-mode-setting-button:hover {
+  border-color: rgba(255, 255, 255, 0.25) !important;
+  background: rgba(255, 255, 255, 0.07) !important;
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.display-mode-setting-selected {
+  border-color: rgba(255, 255, 255, 0.72) !important;
+  background: rgba(255, 255, 255, 0.11) !important;
+  color: rgba(255, 255, 255, 0.95);
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.24);
+}
