@@ -62,10 +62,6 @@ src-tauri/src/lib.rs    Tauri 命令、托盘和窗口逻辑
 src-tauri/tauri.conf.json  Tauri 应用配置
 ```
 
-## 应用更新
-
-应用内支持通过 GitHub Releases 检查新版本。发现更新后，可以直接下载、安装并自动重启应用。
-
 ## License
 
 License 待补充。
