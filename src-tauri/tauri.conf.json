@@ -31,6 +31,19 @@
     }
   },
   "bundle": {
-    "active": false
+    "active": true,
+    "targets": ["nsis"],
+    "createUpdaterArtifacts": true
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEE4RkNEQUUzQzRGMzQ0RDEKUldUUlJQUEU0OXI4cUUwT0orQTNBVG1OV3dBUkduU25od3pGS1FGYUZXUzV4S3Z0d09YZkRjK0sK",
+      "endpoints": [
+        "https://github.com/aixinxino/audio-switcher/releases/latest/download/latest.json"
+      ],
+      "windows": {
+        "installMode": "passive"
+      }
+    }
   }
 }

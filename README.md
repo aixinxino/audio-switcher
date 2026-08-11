@@ -62,11 +62,18 @@ src-tauri/src/lib.rs    Tauri 命令、托盘和窗口逻辑
 src-tauri/tauri.conf.json  Tauri 应用配置
 ```
 
-## 更新计划
+## GitHub 更新
 
-后续版本将通过 GitHub Releases 提供签名更新包，实现应用内检查更新、下载更新并自动重启安装。
+应用内更新基于 GitHub Releases 和 Tauri updater：
+
+1. 在 GitHub 仓库 Secrets 中添加 `TAURI_SIGNING_PRIVATE_KEY`。
+2. 可选添加 `TAURI_SIGNING_PRIVATE_KEY_PASSWORD`。
+3. 将版本号修改为更高的 SemVer，并推送 `v*` 标签。
+4. GitHub Actions 自动构建签名安装包和 `latest.json`。
+5. 用户在设置中检查更新后，可以下载、安装并自动重启。
+
+签名私钥只用于 GitHub Actions，不能提交到仓库。丢失私钥后，已经安装旧版本的用户将无法验证后续更新。
 
 ## License
 
 License 待补充。
-

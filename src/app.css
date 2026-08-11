@@ -293,6 +293,46 @@ kbd {
   color: rgba(255, 255, 255, 0.72);
 }
 
+.update-card {
+  border-color: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.update-card strong {
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.update-action {
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: rgba(255, 255, 255, 0.84);
+}
+
+.update-action:hover {
+  border-color: rgba(255, 255, 255, 0.34) !important;
+  background: rgba(255, 255, 255, 0.14) !important;
+  color: #ffffff;
+}
+
+.update-progress {
+  height: 3px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.update-progress span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: rgba(255, 255, 255, 0.84);
+  transition: width 160ms ease;
+}
+
+.inline-settings-value-highlight {
+  color: rgba(255, 255, 255, 0.86);
+}
+
 .inline-settings-footer {
   flex: 0 0 auto;
 }

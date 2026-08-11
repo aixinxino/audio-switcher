@@ -5,7 +5,9 @@ import { Button, ScrollShadow, Slider } from "@heroui/react";
 import { Settings2 } from "lucide-react";
 import { invoke } from "@tauri-apps/api/core";
 import { currentMonitor, cursorPosition, getCurrentWindow, LogicalSize, PhysicalPosition } from "@tauri-apps/api/window";
+import { relaunch } from "@tauri-apps/plugin-process";
 import { register as registerGlobalShortcut, unregister as unregisterGlobalShortcut, unregisterAll as unregisterAllGlobalShortcuts } from "@tauri-apps/plugin-global-shortcut";
+import { check as checkForUpdate } from "@tauri-apps/plugin-updater";
 import "./app.css";
 
 const SETTINGS_KEY = "audio-switcher-settings";
@@ -163,7 +165,12 @@ function useAudioSwitcher() {
   const [autostartEnabled, setAutostartEnabled] = useState(false);
   const [capturingShortcut, setCapturingShortcut] = useState("");
   const [isSettingsView, setIsSettingsView] = useState(false);
+  const [updateStatus, setUpdateStatus] = useState("idle");
+  const [updateInfo, setUpdateInfo] = useState(null);
+  const [updateProgress, setUpdateProgress] = useState(0);
+  const [updateError, setUpdateError] = useState("");
   const hidePanelPromise = useRef(null);
+  const pendingUpdate = useRef(null);
   const registeredShortcuts = useRef(new Set());
   const shortcutRegistrationQueue = useRef(Promise.resolve());
   const nativeGeometryRef = useRef({ ...COLLAPSED_GEOMETRY });
@@ -516,6 +523,59 @@ function useAudioSwitcher() {
     setIsSettingsView(false);
   }, []);
 
+  const checkForUpdates = useCallback(async ({ silent = false } = {}) => {
+    setUpdateStatus("checking");
+    setUpdateError("");
+    try {
+      const update = await checkForUpdate({ timeout: 15000 });
+      pendingUpdate.current = update;
+      if (update) {
+        setUpdateInfo({
+          version: update.version,
+          notes: update.body || update.rawJson?.notes || "",
+        });
+        setUpdateStatus("available");
+      } else {
+        setUpdateInfo(null);
+        setUpdateStatus("up-to-date");
+      }
+    } catch (updateCheckError) {
+      pendingUpdate.current = null;
+      setUpdateStatus("error");
+      if (!silent) setUpdateError("暂时无法连接 GitHub 更新源");
+      console.warn("update check failed", updateCheckError);
+    }
+  }, []);
+
+  const installUpdate = useCallback(async () => {
+    const update = pendingUpdate.current;
+    if (!update) return;
+    setUpdateStatus("downloading");
+    setUpdateProgress(0);
+    setUpdateError("");
+    let downloaded = 0;
+    let contentLength = 0;
+    try {
+      await update.downloadAndInstall((event) => {
+        if (event.event === "Started") {
+          contentLength = event.data.contentLength || 0;
+          setUpdateProgress(0);
+        } else if (event.event === "Progress") {
+          downloaded += event.data.chunkLength || 0;
+          if (contentLength > 0) setUpdateProgress(Math.min(100, Math.round((downloaded / contentLength) * 100)));
+        } else if (event.event === "Finished") {
+          setUpdateProgress(100);
+        }
+      });
+      setUpdateStatus("installed");
+      await relaunch();
+    } catch (updateInstallError) {
+      setUpdateStatus("error");
+      setUpdateError("更新安装失败，请稍后重试");
+      console.warn("update install failed", updateInstallError);
+    }
+  }, []);
+
   const toggleAutostart = useCallback(async () => {
     const nextValue = !autostartEnabled;
     try {
@@ -549,6 +609,11 @@ function useAudioSwitcher() {
       void unregisterTrackedShortcuts();
     };
   }, []);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => void checkForUpdates({ silent: true }), 1600);
+    return () => window.clearTimeout(timer);
+  }, [checkForUpdates]);
 
   useEffect(() => {
     const onKeyDown = (event) => {
@@ -607,6 +672,12 @@ function useAudioSwitcher() {
     onIslandAnimationComplete,
     requestNativeGeometry,
     showOrHidePanel,
+    updateStatus,
+    updateInfo,
+    updateProgress,
+    updateError,
+    checkForUpdates,
+    installUpdate,
   };
 }
 
@@ -765,6 +836,39 @@ function InlineShortcutRow({ target, label, description, model }) {
   );
 }
 
+function UpdateSection({ model }) {
+  const statusLabels = {
+    idle: "未检查",
+    checking: "检查中…",
+    available: "发现新版本",
+    downloading: `下载中 ${model.updateProgress}%`,
+    installed: "正在重启",
+    "up-to-date": "已是最新",
+    error: "检查失败",
+  };
+  const hasUpdate = model.updateStatus === "available";
+  const busy = ["checking", "downloading", "installed"].includes(model.updateStatus);
+  return (
+    <section className="inline-settings-section mt-3">
+      <div className="inline-settings-section-heading">
+        <div><strong>应用更新</strong><small>通过 GitHub Releases 获取稳定版本</small></div>
+        <span className={`inline-settings-value ${hasUpdate ? "inline-settings-value-highlight" : ""}`}>{statusLabels[model.updateStatus]}</span>
+      </div>
+      <div className="update-card flex items-center justify-between gap-3 rounded-xl border px-3 py-2.5">
+        <div className="min-w-0">
+          <strong className="block truncate text-[11px] font-semibold text-white/82">{hasUpdate ? `Audio Switcher ${model.updateInfo.version}` : "检查应用版本"}</strong>
+          <small className="mt-0.5 block truncate text-[9px] font-medium text-white/38">{hasUpdate ? (model.updateInfo.notes || "新的稳定版本已发布") : "更新包会在安装后自动重启应用"}</small>
+        </div>
+        <Button size="sm" variant="ghost" isDisabled={busy} onPress={hasUpdate ? model.installUpdate : model.checkForUpdates} className="update-action shrink-0 rounded-lg px-3 text-[10px] font-semibold">
+          {hasUpdate ? "安装更新" : busy ? statusLabels[model.updateStatus] : "检查更新"}
+        </Button>
+      </div>
+      {model.updateStatus === "downloading" && <div className="update-progress mt-2"><span style={{ width: `${model.updateProgress}%` }} /></div>}
+      {model.updateError && <p className="mt-2 text-[9px] font-medium text-red-200/80">{model.updateError}</p>}
+    </section>
+  );
+}
+
 function IslandSettingsPanel({ model }) {
   const { settings, commitSettings, error } = model;
   return (
@@ -799,6 +903,8 @@ function IslandSettingsPanel({ model }) {
             </Button>
           </div>
         </section>
+
+        <UpdateSection model={model} />
 
         <section className="inline-settings-section mt-3">
           <div className="inline-settings-section-heading">
