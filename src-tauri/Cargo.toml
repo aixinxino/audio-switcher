@@ -1,6 +1,6 @@
 [package]
 name = "audio_switcher"
-version = "0.1.0"
+version = "0.1.1"
 description = "A compact Windows audio device switcher"
 authors = ["Audio Switcher"]
 edition = "2021"
