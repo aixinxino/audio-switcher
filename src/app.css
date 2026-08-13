@@ -20,7 +20,8 @@ body,
 #app {
   width: 100%;
   height: 100%;
-  min-height: 0;
+  min-width: 360px;
+  min-height: 620px;
   margin: 0;
   background: transparent !important;
   background-color: transparent !important;
@@ -47,10 +48,12 @@ kbd {
   font-size: 9px;
 }
 
-/* The native Tauri window is resized to this same surface on every motion frame. */
+/* The native Tauri window stays at the maximum surface; only the island shell animates. */
 .island-host {
   width: 100%;
   height: 100%;
+  min-width: 360px;
+  min-height: 620px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -80,13 +83,13 @@ kbd {
 
 .island-shell {
   position: relative;
-  width: 160px;
-  height: 40px;
+  width: 104px;
+  height: 42px;
   min-width: 0;
   min-height: 0;
   overflow: hidden;
   border: 0;
-  border-radius: 20px;
+  border-radius: 21px;
   background: #000;
   box-shadow: none;
   transform-origin: top center;
@@ -112,9 +115,19 @@ kbd {
 }
 
 .island-content-collapsed {
+  position: absolute;
+  inset: 0;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
+}
+
+.capsule-transition-frame {
+  width: 104px;
+  height: 42px;
+  min-width: 104px;
+  min-height: 42px;
+  flex: 0 0 104px;
 }
 
 .capsule-content {
@@ -123,19 +136,27 @@ kbd {
 }
 
 .capsule-action {
+  display: grid;
+  place-items: center;
   justify-self: center;
-  width: 48px;
-  min-width: 48px;
+  width: 42px;
+  min-width: 42px;
   height: 40px;
+  padding: 0;
   color: rgba(255, 255, 255, 0.92);
+  line-height: 1;
+  transition: color 140ms ease, transform 140ms ease;
 }
 
 .capsule-action:hover {
-  background: rgba(255, 255, 255, 0.09) !important;
+  background: transparent !important;
+  color: #ffffff;
+  transform: scale(1.06);
 }
 
 .capsule-action:active {
-  background: rgba(255, 255, 255, 0.15) !important;
+  background: transparent !important;
+  transform: scale(0.94);
 }
 
 .capsule-icon-live {
@@ -153,6 +174,8 @@ kbd {
 }
 
 .island-content-expanded {
+  position: absolute;
+  inset: 0;
   transform-origin: top center;
 }
 
@@ -294,24 +317,67 @@ kbd {
 }
 
 .update-card {
+  width: 100%;
   border-color: rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.025);
+  background: #101216;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.025);
 }
 
-.update-card strong {
-  color: rgba(255, 255, 255, 0.82);
+.update-card-body {
+  min-width: 0;
+}
+
+.update-version-grid {
+  display: grid;
+  min-width: 0;
+  flex: 1 1 auto;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.update-version-item {
+  min-width: 0;
+  padding: 0 2px;
+}
+
+.update-version-item small,
+.update-version-item strong {
+  display: block;
+}
+
+.update-version-item small {
+  color: rgba(255, 255, 255, 0.38);
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.update-version-item strong {
+  margin-top: 2px;
+  color: rgba(255, 255, 255, 0.86);
+  font-size: 11px;
+  font-weight: 700;
 }
 
 .update-action {
-  border: 1px solid rgba(255, 255, 255, 0.16) !important;
-  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  background: #0d0f12 !important;
   color: rgba(255, 255, 255, 0.84);
 }
 
 .update-action:hover {
   border-color: rgba(255, 255, 255, 0.34) !important;
-  background: rgba(255, 255, 255, 0.14) !important;
+  background: #171a1f !important;
   color: #ffffff;
+}
+
+.update-action-done,
+.update-action-done:hover,
+.update-action-done[data-disabled="true"] {
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  background: #0f1114 !important;
+  color: rgba(255, 255, 255, 0.42) !important;
+  cursor: default;
 }
 
 .update-progress {
@@ -341,26 +407,79 @@ kbd {
   flex: 0 0 auto;
 }
 
+.audio-panel-toolbar {
+  min-height: 32px;
+}
+
+.island-panel-view-area {
+  position: relative;
+}
+
+.island-panel-view {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
+}
+
+.audio-panel-body {
+  position: relative;
+}
+
+.audio-panel-group {
+  position: absolute;
+  inset: 8px 0 0;
+}
+
+.audio-panel-title {
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.01em;
+}
+
+.audio-panel-actions {
+  display: flex;
+  justify-content: flex-end;
+  min-width: 56px;
+}
+
 .audio-segment-control {
+  position: relative;
   height: 34px;
-  border-color: rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.035);
+  gap: 2px;
+  align-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 3px;
+  background: #0c0d10;
+}
+
+.audio-sub-toolbar {
+  flex: 0 0 auto;
 }
 
 .audio-segment-button {
+  position: relative;
   height: 26px;
+  border-radius: 8px !important;
   color: rgba(255, 255, 255, 0.45);
 }
 
 .audio-segment-button:hover {
-  background: rgba(255, 255, 255, 0.06) !important;
+  background: rgba(255, 255, 255, 0.03) !important;
   color: rgba(255, 255, 255, 0.85);
 }
 
 .audio-segment-active {
-  background: rgba(255, 255, 255, 0.13) !important;
+  background: #1b1d21 !important;
   color: rgba(255, 255, 255, 0.95) !important;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12), 0 1px 2px rgba(0, 0, 0, 0.26);
+}
+
+.audio-segment-active::after {
+  display: none;
 }
 
 .audio-toolbar-button,
@@ -371,6 +490,12 @@ kbd {
   color: rgba(255, 255, 255, 0.64);
 }
 
+.audio-toolbar-button-edge {
+  width: 28px;
+  min-width: 28px;
+  height: 28px;
+}
+
 .audio-toolbar-button:hover,
 .audio-icon-button:hover {
   background: rgba(255, 255, 255, 0.08) !important;
@@ -379,6 +504,304 @@ kbd {
 
 .island-panel-body {
   overflow: hidden;
+}
+
+.clipboard-panel {
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
+  gap: 6px;
+  overflow: hidden;
+  padding-top: 8px;
+}
+
+.clipboard-search-row {
+  height: 34px;
+  flex: 0 0 34px;
+  border-color: rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.clipboard-search-row input {
+  min-width: 0;
+  flex: 1;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 11px;
+}
+
+.clipboard-search-row input::placeholder {
+  color: rgba(255, 255, 255, 0.32);
+}
+
+.clipboard-clear-button {
+  width: 24px;
+  min-width: 24px;
+  height: 24px;
+  color: rgba(255, 255, 255, 0.38);
+}
+
+.clipboard-clear-button:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.quiet-scrollbar {
+  scrollbar-color: rgba(255, 255, 255, 0.11) transparent;
+  scrollbar-width: thin;
+}
+
+.quiet-scrollbar::-webkit-scrollbar {
+  width: 2px;
+  height: 2px;
+}
+
+.quiet-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.quiet-scrollbar::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.11);
+}
+
+.quiet-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.clipboard-list {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0;
+  overflow-x: hidden !important;
+}
+
+.clipboard-row {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  min-height: 56px;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  overflow: hidden;
+  border: 0 !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 0 !important;
+  padding: 8px 4px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.82);
+  text-align: left;
+  transition: background-color 140ms ease, box-shadow 140ms ease;
+}
+
+.clipboard-row:hover {
+  border-bottom-color: rgba(255, 255, 255, 0.13) !important;
+  background: rgba(255, 255, 255, 0.035) !important;
+}
+
+.clipboard-row-copy-loading,
+.clipboard-row-copy-success {
+  border-bottom-color: rgba(112, 214, 157, 0.2) !important;
+  background: rgba(112, 214, 157, 0.045) !important;
+  box-shadow: inset 2px 0 0 #70d69d;
+}
+
+.clipboard-row-copy-error {
+  border-bottom-color: rgba(237, 113, 128, 0.2) !important;
+  background: rgba(237, 113, 128, 0.045) !important;
+  box-shadow: inset 2px 0 0 #ed7180;
+}
+
+.clipboard-row-icon {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 9px;
+  color: rgba(255, 255, 255, 0.56);
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.clipboard-row-thumb {
+  width: 44px;
+  height: 34px;
+  flex-basis: 44px;
+  border-color: rgba(255, 255, 255, 0.16);
+  background: #15171b;
+}
+
+.clipboard-row-thumb img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.clipboard-row-copy {
+  display: block;
+  min-width: 0;
+  flex: 1 1 auto;
+  overflow: hidden;
+}
+
+.clipboard-row-copy strong {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-height: 1.35;
+  white-space: normal;
+}
+
+.clipboard-row-chevron {
+  flex: 0 0 auto;
+  color: rgba(255, 255, 255, 0.25);
+  transition: color 140ms ease, transform 140ms ease;
+}
+
+.clipboard-row:hover .clipboard-row-chevron {
+  color: rgba(255, 255, 255, 0.62);
+  transform: translateX(2px);
+}
+
+.clipboard-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow: hidden;
+  padding-top: 8px;
+}
+
+.clipboard-detail-meta {
+  flex: 0 0 auto;
+}
+
+.clipboard-detail-icon {
+  color: rgba(255, 255, 255, 0.58);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.clipboard-detail-preview {
+  display: grid;
+  min-height: 0;
+  flex: 1 1 auto;
+  place-items: center;
+  overflow: auto;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 13px;
+  background: #0a0b0d;
+}
+
+.clipboard-detail-preview-image {
+  padding: 10px;
+}
+
+.clipboard-detail-preview-image img {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 8px;
+  object-fit: contain;
+}
+
+.clipboard-detail-preview-text {
+  display: block;
+  padding: 12px;
+}
+
+.clipboard-detail-preview-text pre {
+  min-height: 100%;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.82);
+  font-family: "Segoe UI Variable", "Microsoft YaHei UI", "Microsoft YaHei", sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.clipboard-detail-copy {
+  flex: 0 0 40px;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+  background: rgba(255, 255, 255, 0.055) !important;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.clipboard-detail-copy:hover {
+  border-color: rgba(255, 255, 255, 0.28) !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff;
+}
+
+.clipboard-copy-status {
+  display: grid;
+  width: 22px;
+  height: 22px;
+  flex: 0 0 22px;
+  place-items: center;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.clipboard-copy-status-loading,
+.clipboard-copy-status-success {
+  color: #70d69d;
+}
+
+.clipboard-copy-status-error {
+  color: #ed7180;
+}
+
+.clipboard-empty {
+  min-width: 0;
+  border: 0;
+  background: transparent;
+}
+
+.clipboard-footer {
+  flex: 0 0 auto;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 8px;
+}
+
+.clipboard-feedback-capsule {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  place-items: center;
+  color: #70d69d;
+  background: #000;
+}
+
+.clipboard-feedback-capsule-error {
+  color: #ed7180;
+}
+
+.clipboard-feedback-spinner {
+  display: block;
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(112, 214, 157, 0.2);
+  border-top-color: #70d69d;
+  border-right-color: #70d69d;
+  border-radius: 999px;
+  transform-origin: center;
+  will-change: transform;
+  animation: clipboard-feedback-spin 0.72s linear infinite;
+}
+
+@keyframes clipboard-feedback-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .audio-volume-row {
@@ -422,7 +845,18 @@ kbd {
 }
 
 .audio-device-list {
+  min-width: 0;
   scrollbar-gutter: stable;
+}
+
+.audio-device-scroll {
+  min-width: 0;
+  overflow-x: hidden;
+}
+
+.audio-device-control-footer {
+  flex: 0 0 auto;
+  padding-top: 2px;
 }
 
 .audio-device-row {
