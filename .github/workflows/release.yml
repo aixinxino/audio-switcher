@@ -35,7 +35,16 @@ jobs:
         with:
           tagName: ${{ github.ref_name }}
           releaseName: Audio Switcher ${{ github.ref_name }}
-          releaseBody: See the assets below for the Windows installer and updater metadata.
+          releaseBody: |
+            ## 更新内容
+
+            - 重构 WinIsland 风格的单容器展开与收起动画，减少胶囊和面板切换时的闪烁与断帧。
+            - 优化多套音频输入、输出设备的切换、静音和音量调整体验。
+            - 新增剪贴板历史面板，支持文本与图片保存、预览和再次复制。
+            - 拆分 React 音频面板、剪贴板面板、设置面板和窗口状态逻辑，提升代码可维护性。
+            - 新增 GitHub Actions 自动构建 Windows 安装包与 Tauri 更新文件。
+
+            详细文件请见下方附件。
           releaseDraft: false
           prerelease: false
           includeUpdaterJson: true
